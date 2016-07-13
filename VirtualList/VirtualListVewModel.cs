@@ -32,11 +32,12 @@ namespace VirtualList
             _filterController = new FilterController<Poco>();
             Items = new BindingList<Poco>();
 
+
+            /// this does not update Count, if no virtualisation request is issued
             var sharedDataSource = _service
                                    .DataStream
                                    .Do(x => Trace.WriteLine($"Service -> {x}"))
                                    .ToObservableChangeSet()
-                                   .Reverse()
                                    .Virtualise(_virtualisingController)
                                    .Publish();
 
@@ -46,6 +47,23 @@ namespace VirtualList
                           .Subscribe();
 
 
+            /// this works, but items are reversed in the BindingList
+            //var sharedDataSource = _service
+            //                       .DataStream
+            //                       .Do(x => Trace.WriteLine($"Service -> {x}"))
+            //                       .ToObservableChangeSet()
+            //                       .Reverse()
+            //                       .Virtualise(_virtualisingController)
+            //                       .Publish();
+
+            //var binding = sharedDataSource
+            //              .ObserveOn(_bindingContext)
+            //              .Bind(Items)
+            //              .Subscribe();
+
+
+            /// this works, but requires  transitioning from keyed Changeset then back to un-keyed ChangeSet
+            /// it also requires to sort before virtualise
             //var sharedDataSource = _service
             //                       .DataStream
             //                       .Do(x => Trace.WriteLine($"Service -> {x}"))
@@ -62,7 +80,8 @@ namespace VirtualList
             //              .Subscribe();
 
 
-            Count = sharedDataSource.Select(x => x.Response.TotalSize);
+            Count = sharedDataSource.Select(x => {
+                                            return x.Response.TotalSize; });
 
             Count.Subscribe(x => Trace.WriteLine($"Count = {x}"));
 
