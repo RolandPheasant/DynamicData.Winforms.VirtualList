@@ -14,12 +14,12 @@ namespace VirtualList
             DataStream = Observable.Create<Poco>(o => 
                          {
                             var rnd = new Random();
-                            var source = Observable.Interval(TimeSpan.FromMilliseconds(100))
+                            var source = Observable.Interval(TimeSpan.FromMilliseconds(50))
                                             .Select((x,i) => new Poco(i,
                                                                       rnd.Next(0, 100),
                                                                       rnd.Next(0, 20),
                                                                       rnd.Next(0, 8)))
-                                            .Take(1000);
+                                            .Take(100);
                             return source.Subscribe(o);
                          });
         }
