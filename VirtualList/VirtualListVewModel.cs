@@ -36,6 +36,7 @@ namespace VirtualList
                                    .DataStream
                                    .Do(x => Trace.WriteLine($"Service -> {x}"))
                                    .ToObservableChangeSet()
+                                   .Sort(SortExpressionComparer<Poco>.Ascending(x => x.Id))
                                    .Virtualise(_virtualisingController)
                                    .Publish();
 
