@@ -25,6 +25,7 @@ namespace DynamicDataEx
         {
             if (changes.Count > _refreshThreshold || !_loaded)
             {
+
                 _list.RaiseListChangedEvents = false;
                 _list.Clone(changes);
                 _loaded = true;

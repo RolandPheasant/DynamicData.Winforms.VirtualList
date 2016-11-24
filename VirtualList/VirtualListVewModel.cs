@@ -7,6 +7,7 @@ using System.Reactive.Linq;
 using DynamicDataEx;
 using System.Reactive.Disposables;
 using System.Diagnostics;
+using System.Reactive.Subjects;
 using DynamicData.Binding;
 using DynamicData.Aggregation;//this using is importantant, otherwise it uses standard observable.Count()
 
@@ -14,10 +15,7 @@ namespace VirtualList
 {
    public class VirtualListVewModel
     {
-        private SynchronizationContext _bindingContext;
-        private DataService _service;
-        private VirtualisingController _virtualisingController;
-        private FilterController<Poco> _filterController;
+        private readonly ISubject<VirtualRequest> _virtualRequest;
 
         public IObservable<int> Count { get; }
         public BindingList<Poco> Items { get; }
@@ -27,21 +25,19 @@ namespace VirtualList
 
         public VirtualListVewModel(SynchronizationContext bindingContext, DataService service)
         {
-            _bindingContext = bindingContext;
-            _service = service;
-            _virtualisingController = new VirtualisingController(new VirtualRequest(0,10));
-            _filterController = new FilterController<Poco>();
+            _virtualRequest = new BehaviorSubject<VirtualRequest>(new VirtualRequest(0,10));
+
             Items = new BindingList<Poco>();
 
-            var sharedDataSource = _service
+            var sharedDataSource = service
                 .DataStream
                 .Do(x => Trace.WriteLine($"Service -> {x}"))
                 .ToObservableChangeSet()
                 .Publish();
 
             var binding = sharedDataSource
-                          .Virtualise(_virtualisingController)
-                          .ObserveOn(_bindingContext)
+                          .Virtualise(_virtualRequest)
+                          .ObserveOn(bindingContext)
                           .Bind(Items)
                           .Subscribe();
             
@@ -59,7 +55,7 @@ namespace VirtualList
 
         public void Virtualise(int startIndex, int size)
         {
-            _virtualisingController.Virtualise(new VirtualRequest(startIndex, size));
+            _virtualRequest.OnNext(new VirtualRequest(startIndex, size));
         }
 
     }
