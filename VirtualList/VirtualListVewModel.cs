@@ -1,5 +1,4 @@
 ﻿using DynamicData;
-using DynamicData.Controllers;
 using System;
 using System.ComponentModel;
 using System.Threading;
@@ -8,7 +7,6 @@ using DynamicDataEx;
 using System.Reactive.Disposables;
 using System.Diagnostics;
 using System.Reactive.Subjects;
-using DynamicData.Binding;
 using DynamicData.Aggregation;//this using is importantant, otherwise it uses standard observable.Count()
 
 namespace VirtualList

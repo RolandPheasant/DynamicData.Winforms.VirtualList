@@ -41,18 +41,5 @@ namespace DynamicDataEx
     }
 
 
-    public class BindingListAdaptor<TObject, TKey> : IChangeSetAdaptor<TObject, TKey>
-    {
-        private readonly int _refreshThreshold;
-        private bool _loaded;
-
-
-
-        public void Adapt(IChangeSet<TObject, TKey> change)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
 
 }

@@ -19,7 +19,7 @@ namespace VirtualList
                                                                       rnd.Next(0, 100),
                                                                       rnd.Next(0, 20),
                                                                       rnd.Next(0, 8)))
-                                            .Take(100);
+                                            .Take(10000);
                             return source.Subscribe(o);
                          });
         }
